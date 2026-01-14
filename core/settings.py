@@ -2,12 +2,13 @@
 
 from pathlib import Path
 from datetime import timedelta
-from decouple import config
+from decouple import config 
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",") if host.strip()]
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -19,7 +20,6 @@ SECRET_KEY = 'django-insecure-*@g*vas399!6w076(uk9^3-l@2x&9-6=&wq=jbf42m6d_utw)%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
