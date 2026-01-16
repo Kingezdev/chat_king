@@ -6,10 +6,11 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.throttling import AnonRateThrottle
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class ProtectedView(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         return Response({

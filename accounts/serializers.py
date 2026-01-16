@@ -18,7 +18,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data["email"],
             password=validated_data["password"],
         )
-        Token.objects.create(user=user)
+        # Token creation (DRF Token) is removed in favor of JWT-based authentication.
         return user
     
 
