@@ -29,12 +29,14 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_THROTTLE_CLASSES': [
-        "rest_framework.throttling.AnonRateThrottle",
-        "rest_framework.throttling.UserRateThrottle",
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        "anon": "5/min",
-        "user": "100/min",
+        'anon': '5/min',
+        'user': '100/min',
+        'auth_register': '5/hour',    # More strict for registration
+        'auth_login': '10/hour',      # Slightly more lenient for login
     },
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',

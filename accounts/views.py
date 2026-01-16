@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from .throttles import LoginThrottle, RegisterThrottle
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
@@ -22,7 +23,7 @@ class ProtectedView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    throttle_classes = [AnonRateThrottle]
+    throttle_classes = [LoginThrottle]
     
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -48,7 +49,7 @@ class LogoutView(APIView):
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
-    throttle_classes = [AnonRateThrottle]
+    throttle_classes = [RegisterThrottle]
     
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
