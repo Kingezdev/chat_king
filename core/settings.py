@@ -100,12 +100,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # For development only, restrict in production
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Add your frontend URL here
-    "http://127.0.0.1:3000",
-]
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=bool)
+
+# Parse comma-separated list of allowed origins from environment variable
+# Example: CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://127.0.0.1:3000',
+    cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
+)
 
 # If you're using JWT with CORS
 CORS_ALLOW_HEADERS = [
