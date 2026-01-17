@@ -32,7 +32,8 @@ class ListConversation(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"message": "Error fetching conversations"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    def get_queryset(self):
+        return Conversation.objects.all()
 
 class DeleteConversation(APIView):
     permission_classes = [IsAuthenticated]
