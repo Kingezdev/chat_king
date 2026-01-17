@@ -23,9 +23,17 @@ class CreateConversationView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-#class ListConversation(APIView):
-   # permission_classes = [IsAuthenticated]
-    
+class ListConversation(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            conversations = Conversation.objects.all()
+            serializer = ConversationSerializer(conversations, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": "Error fetching conversations"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class DeleteConversation(APIView):
     permission_classes = [IsAuthenticated]
     def delete(self, request, pk):
@@ -58,3 +66,16 @@ class CreateMessage(APIView):
                 status = status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetConversationMessages(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, pk):
+        try:
+            conversation = Conversation.objects.get(pk=pk)
+            messages = Chat.objects.filter(conversation=conversation)
+            serializer = ChatSerializer(messages, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Conversation.DoesNotExist:
+            return Response({"message": "Conversation Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"message": "Error fetching messages"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
