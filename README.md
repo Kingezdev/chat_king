@@ -4,13 +4,13 @@ A secure and scalable chat API built with Django REST Framework and JWT authenti
 
 ## Features
 
-- 🔐 **JWT Authentication** - Secure token-based authentication
-- 👤 **User Management** - Registration, login, and profile management
-- 💬 **Real-time Chat** - Create and manage conversations and messages
-- ⚡ **Rate Limiting** - Protect your API from abuse
-- 🔒 **Password Validation** - Strong password requirements
-- 🌐 **CORS Support** - Configure allowed origins via environment variables
-- 🐳 **Docker Support** - Easy deployment with Docker and docker-compose
+**JWT Authentication** - Secure token-based authentication
+**User Management** - Registration, login, and profile management
+**Real-time Chat** - Create and manage conversations and messages
+**Rate Limiting** - Protect your API from abuse
+**Password Validation** - Strong password requirements
+**CORS Support** - Configure allowed origins via environment variables
+**Docker Support** - Easy deployment with Docker and docker-compose
 
 ## Prerequisites
 

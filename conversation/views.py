@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import ConversationSerializer, ChatSerializer
 from rest_framework import status
 from .models import Chat, Conversation
+from rest_framework.filters import SearchFilter
+from rest_framework.generics import ListAPIView
 
 class CreateConversationView(APIView):
     permission_classes = [IsAuthenticated]
@@ -23,23 +25,18 @@ class CreateConversationView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class ListConversation(APIView):
+class ListConversation(ListAPIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request):
-        try:
-            conversations = Conversation.objects.all()
-            serializer = ConversationSerializer(conversations, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"message": "Error fetching conversations"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    def get_queryset(self):
-        return Conversation.objects.all()
+    serializer_class = ConversationSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['title']
+
 
 class DeleteConversation(APIView):
     permission_classes = [IsAuthenticated]
     def delete(self, request, pk):
         try:
-            conversation = Conversation.objects.get(pk = pk)
+            conversation = Conversation.objects.get(pk = pk, user=request.user)
             conversation.delete()
             return Response({"message":  "Conversation Deleted"}, status=status.HTTP_200_OK)
         except Conversation.DoesNotExist:
@@ -72,7 +69,7 @@ class GetConversationMessages(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         try:
-            conversation = Conversation.objects.get(pk=pk)
+            conversation = Conversation.objects.get(pk=pk, user=request.user)
             messages = Chat.objects.filter(conversation=conversation)
             serializer = ChatSerializer(messages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

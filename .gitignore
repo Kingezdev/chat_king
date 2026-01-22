@@ -24,3 +24,6 @@ staticfiles/
 
 # Mac/Linux
 .DS_Store
+
+#tests files
+test.py
