@@ -10,6 +10,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
 from .serializers import RegisterSerializer, LoginSerializer
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
 
 class ProtectedView(APIView):
     permission_classes = [IsAuthenticated]
@@ -21,6 +24,7 @@ class ProtectedView(APIView):
             "phone": request.user.profile.phone
         })
 
+@method_decorator(csrf_exempt, name='dispatch')
 class LoginView(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [LoginThrottle]

@@ -22,12 +22,12 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    ],
+    ),
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',
@@ -38,12 +38,15 @@ REST_FRAMEWORK = {
         'auth_register': '5/hour',    # More strict for registration
         'auth_login': '10/hour',      # Slightly more lenient for login
     },
-    'DEFAULT_RENDERER_CLASSES': [
+    'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-    ],
-    'DEFAULT_PARSER_CLASSES': [
+    ),
+    'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
-    ]
+    ),
+    'DEFAULT_PERMISSIONS': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
 
 SIMPLE_JWT = {
@@ -100,11 +103,40 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.DisableCSRFForAPI',  # Our custom middleware
 ]
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS', default=True, cast=bool)
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_EXPOSE_HEADERS = [
+    'content-type',
+    'x-csrftoken',
+]
+
+# CSRF settings
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_HTTPONLY = True
+CSRF_TRUSTED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://127.0.0.1:3000',
+    cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
+)
+
+# Session settings
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
 
 # Parse comma-separated list of allowed origins from environment variable
 # Example: CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000

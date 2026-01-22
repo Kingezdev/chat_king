@@ -7,6 +7,8 @@ from rest_framework import status
 from .models import Chat, Conversation
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
+from .services.ai_service import chat_model
+from .services.model_registery import get_free_models
 
 class CreateConversationView(APIView):
     permission_classes = [IsAuthenticated]
@@ -77,3 +79,37 @@ class GetConversationMessages(APIView):
             return Response({"message": "Conversation Not Found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"message": "Error fetching messages"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ListModelsView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response(get_free_models(), status=status.HTTP_200_OK)
+    
+
+class AIChatView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        prompt = request.data.get("prompt")
+        model_name = request.data.get("model_name")
+
+        if not prompt or not model_name:
+            return Response(
+                {"message": "Prompt and model_name are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            reply = chat_model(prompt, model_name)
+            return Response({"reply": reply}, status=status.HTTP_200_OK)
+        except ValueError as ve:
+            return Response(
+                {"message": str(ve)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"message": "Error communicating with AI service."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+ 
